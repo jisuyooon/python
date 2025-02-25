@@ -1,9 +1,12 @@
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
+from dotenv import load_dotenv
+import os
 import talk_yjs as tk
 import gemini
 
-TOKEN = ''
+load_dotenv()
+TOKEN = os.getenv("BOT_V2_TOKEN")
 
 # TRIGGER_WORDS = {
 #     "안녕":"안녕하세요! 저는 지수봇입니다!!😀",
@@ -23,12 +26,12 @@ async def monitor_chat(update, context):
     chat_id = update.message.chat_id # 메시지가 온 채팅방 # 택배 주소지  
 
     if "gpt" in user_text:
-        res = aiai(user_text.replace("gpt ",""))
-        await context.bot.send_message(chat_id=chat_id, text=res)
+        res = gemini.aiai(user_text.replace("gpt ",""))
+        await context.bot.send_message(chat_id=chat_id, text=res) #parse_mode="MarkdownV2"
     elif "영화정보" in user_text: pass
         # await 영화정보크롤링()함수를 실행
     elif "사진줘" in user_text:
-        send_photo()
+        await send_photo(update,context)
     else:
         for key, res in tk.TRIGGER_WORDS.items():
             if key in user_text:
